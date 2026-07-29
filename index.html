@@ -1,0 +1,940 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>استمارة كشف حضور وانصراف - نموذج 40-231000</title>
+<style>
+  :root{
+    --ui-bg:#eef1f5;
+    --ui-panel:#ffffff;
+    --ui-border:#cfd6e0;
+    --ui-accent:#1e5aa8;
+    --ui-accent-soft:#e3edfa;
+    --ui-muted:#5b6673;
+    --ui-text:#111;
+    --ui-input:#fff;
+    --ui-hover:#f3f6fa;
+    --ui-shadow:rgba(20,40,80,.07);
+    --warn-bg:#fff4e2; --warn-br:#f0d3a4; --warn-tx:#8a4b00;
+    /* الورقة */
+    --paper:#ffffff;
+    --paper-ink:#000000;
+    --line:#000000;
+    --ghost:#b9c2cd;
+    /* المساحات المحجوزة للورق الرسمي */
+    --top-mm:45mm;
+    --bot-mm:15mm;
+  }
+  body.dark{
+    --ui-bg:#0f1319;
+    --ui-panel:#171d26;
+    --ui-border:#2b3542;
+    --ui-accent:#5aa0f0;
+    --ui-accent-soft:#1d2a3c;
+    --ui-muted:#94a2b4;
+    --ui-text:#e6edf5;
+    --ui-input:#111823;
+    --ui-hover:#1e2732;
+    --ui-shadow:rgba(0,0,0,.5);
+    --warn-bg:#33260f; --warn-br:#6b5220; --warn-tx:#f0c583;
+    --paper:#161b22;
+    --paper-ink:#e6edf5;
+    --line:#5a6673;
+    --ghost:#3d4753;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+  body{
+    font-family:"Segoe UI","Tahoma",Arial,sans-serif;
+    background:var(--ui-bg);
+    color:var(--ui-text);
+    -webkit-tap-highlight-color:rgba(0,0,0,.08);
+  }
+
+  /* ============ التخطيط العام ============ */
+  .app{display:flex;align-items:flex-start;gap:16px;padding:16px;min-height:100vh}
+  .controls{
+    width:360px;flex:0 0 360px;position:sticky;top:16px;
+    max-height:calc(100vh - 32px);overflow:auto;
+    background:var(--ui-panel);border:1px solid var(--ui-border);border-radius:12px;
+    padding:14px;box-shadow:0 2px 10px var(--ui-shadow);
+  }
+  .preview-wrap{flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;gap:14px}
+
+  .head-row{display:flex;align-items:flex-start;justify-content:space-between;gap:8px}
+  .controls h1{font-size:15px;margin:0 0 4px;color:var(--ui-accent)}
+  .controls .sub{font-size:11.5px;color:var(--ui-muted);margin:0 0 12px}
+  fieldset{border:1px solid var(--ui-border);border-radius:9px;padding:10px;margin:0 0 12px}
+  legend{font-size:12px;font-weight:700;color:var(--ui-accent);padding:0 6px}
+  label{display:block;font-size:11.5px;color:var(--ui-muted);margin:6px 0 3px}
+  input[type=text],input[type=date],input[type=month],input[type=tel],input[type=number],select,textarea{
+    width:100%;padding:6px 8px;font:inherit;font-size:12.5px;
+    border:1px solid var(--ui-border);border-radius:6px;background:var(--ui-input);color:var(--ui-text);
+    -webkit-appearance:none;appearance:none;
+  }
+  textarea{resize:vertical;min-height:56px}
+  input:focus,select:focus,textarea:focus{outline:2px solid var(--ui-accent-soft);border-color:var(--ui-accent)}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:0 10px}
+  .radio-row{display:flex;gap:12px;flex-wrap:wrap;margin-top:5px}
+  .radio-row label{display:flex;align-items:center;gap:5px;margin:0;font-size:12px;color:var(--ui-text);cursor:pointer}
+  .radio-row input{margin:0}
+  .check-line{display:flex;align-items:center;gap:6px;font-size:12px;margin-top:8px;cursor:pointer;color:var(--ui-text)}
+  .hint{font-size:11px;color:var(--ui-muted);margin-top:4px;line-height:1.5}
+
+  .btn{
+    font:inherit;font-size:12.5px;font-weight:600;cursor:pointer;
+    border:1px solid var(--ui-border);background:var(--ui-panel);color:var(--ui-text);
+    border-radius:7px;padding:7px 10px;
+    -webkit-appearance:none;appearance:none;touch-action:manipulation;
+  }
+  .btn:hover{background:var(--ui-hover)}
+  .btn-primary{background:var(--ui-accent);border-color:var(--ui-accent);color:#fff}
+  .btn-primary:hover{filter:brightness(1.12)}
+  .btn-row{display:flex;gap:8px;flex-wrap:wrap}
+  .btn-row .btn{flex:1}
+  .mini{font-size:11px;padding:5px 7px}
+  .theme-btn{flex:0 0 auto;width:34px;height:34px;padding:0;font-size:16px;line-height:1;border-radius:8px}
+
+  /* ============ التقويم ============ */
+  .cal-head{display:flex;align-items:center;justify-content:space-between;gap:6px;margin-bottom:8px}
+  .cal-title{font-size:13px;font-weight:700}
+  .cal-nav{background:var(--ui-panel);color:var(--ui-text);border:1px solid var(--ui-border);
+           border-radius:6px;width:28px;height:28px;cursor:pointer;font-size:14px;line-height:1}
+  .cal-nav:hover{background:var(--ui-hover)}
+  .cal{display:grid;grid-template-columns:repeat(7,1fr);gap:3px}
+  .cal .dow{font-size:9.5px;text-align:center;color:var(--ui-muted);font-weight:700;padding:2px 0}
+  .cal .day{
+    border:1px solid var(--ui-border);background:var(--ui-input);color:var(--ui-text);
+    border-radius:6px;padding:6px 0;font-size:12px;text-align:center;cursor:pointer;
+    -webkit-user-select:none;user-select:none;
+    font-family:inherit;font-weight:500;line-height:1.2;
+    -webkit-appearance:none;appearance:none;touch-action:manipulation;
+  }
+  .cal .day:hover{border-color:var(--ui-accent)}
+  .cal .day.weekend{background:var(--ui-hover);color:var(--ui-muted)}
+  .cal .day.on{background:var(--ui-accent);border-color:var(--ui-accent);color:#fff;font-weight:700}
+  .cal .empty{visibility:hidden}
+  .cal-count{font-size:11.5px;color:var(--ui-muted);margin-top:8px;text-align:center}
+  .warn{font-size:11.5px;color:var(--warn-tx);background:var(--warn-bg);border:1px solid var(--warn-br);
+        border-radius:6px;padding:6px 8px;margin-top:8px}
+
+  /* تنبيه عند تعذّر فتح نافذة الطباعة (المتصفحات المدمجة داخل التطبيقات) */
+  .notice{
+    background:var(--warn-bg);color:var(--warn-tx);border:1px solid var(--warn-br);
+    border-radius:9px;padding:11px 13px;font-size:13px;line-height:1.75;
+  }
+  .notice b{font-weight:800}
+  #printTip{
+    display:none;position:fixed;z-index:60;top:10px;left:10px;right:10px;
+    max-width:520px;margin:0 auto;box-shadow:0 6px 24px rgba(0,0,0,.28);
+  }
+  #printTip .btn{margin-top:9px;width:100%}
+  #noJs{margin:10px;font-size:14px}
+
+  /* ============ ورقة A4 ============ */
+  .sheet{
+    width:210mm;height:296.8mm;overflow:hidden;
+    background:var(--paper);color:var(--paper-ink);
+    padding:var(--top-mm) 10mm var(--bot-mm);
+    box-shadow:0 3px 14px var(--ui-shadow);
+    font-family:"Traditional Arabic","Simplified Arabic",Tahoma,"Segoe UI",Arial,sans-serif;
+    font-size:10.5pt;line-height:1.45;position:relative;
+    -webkit-print-color-adjust:exact;print-color-adjust:exact;
+  }
+  .sheet-body{transform-origin:top center}
+
+  /* تصغير المعاينة لتناسب عرض الشاشة (الجوال) — لا يؤثر على الطباعة */
+  @media screen{
+    .sheet-holder{width:calc(210mm * var(--pv,1));height:calc(296.8mm * var(--pv,1))}
+    .sheet{transform:scale(var(--pv,1));transform-origin:top right}
+  }
+
+  /* دلالات المساحات المحجوزة — على الشاشة فقط */
+  .zone{
+    position:absolute;left:10mm;right:10mm;border:1px dashed var(--ghost);border-radius:3px;
+    display:flex;align-items:center;justify-content:center;
+    font-size:9pt;color:var(--ghost);pointer-events:none;
+  }
+  .zone-top{top:2mm;height:calc(var(--top-mm) - 4mm)}
+  .zone-bot{bottom:2mm;height:calc(var(--bot-mm) - 4mm)}
+
+  .title-box{border:1px solid var(--line);text-align:center;font-weight:700;font-size:12pt;padding:2px 4px;margin-bottom:5px}
+  .lbl{font-weight:700;white-space:nowrap}
+  .fill{
+    flex:1;border-bottom:1px dotted var(--line);min-height:1em;
+    padding:0 4px 1px;font-weight:700;text-align:center;
+    overflow:hidden;white-space:nowrap;text-overflow:ellipsis;
+  }
+  .fld{display:flex;align-items:flex-end;gap:5px}
+
+  /* الإشارة والتاريخ على يسار الصفحة */
+  .top-line{display:flex;gap:5px;width:44%;margin:0 auto 2px 0}
+  .top-line .fld{flex:1}
+  .cbox{display:inline-block;width:4.4mm;height:4.4mm;border:1px solid var(--line);
+        text-align:center;line-height:4mm;font-size:9.5pt;font-weight:700;vertical-align:middle}
+  .cb-group{display:flex;gap:8px;align-items:center}
+  .cb-group span.lbl{font-size:10.5pt}
+  /* خانات الفئة في منتصف الصفحة */
+  .cats{display:flex;gap:34px;justify-content:center;width:100%;margin:3px 0 5px}
+
+  .info-box{border:1px solid var(--line);padding:4px 7px}
+  .info-row{display:grid;grid-template-columns:1fr 1fr;gap:0 22px;margin-bottom:3px}
+  .civil{display:flex;gap:0;direction:ltr}
+  .civil i{
+    display:block;width:5mm;height:5.4mm;border:1px solid var(--line);border-left:none;
+    font-style:normal;font-weight:700;text-align:center;line-height:5.2mm;font-size:10pt;
+  }
+  .civil i:last-child{border-left:1px solid var(--line)}
+  .site-row{display:flex;justify-content:center;align-items:center;gap:16px;margin:5px 0 3px}
+  .month-row{display:flex;justify-content:center;gap:6px;margin-top:2px}
+  .month-row .fill{flex:0 0 46%}
+
+  .ext-box{border:1px solid var(--line);display:grid;grid-template-columns:1fr 1fr;gap:0 18px;padding:2px 7px;margin-top:4px}
+  .sec-head{border:1px solid var(--line);border-top:none;text-align:center;font-weight:700;font-size:10.5pt;padding:1px 4px}
+
+  table.att{width:100%;border-collapse:collapse;margin-top:4px;table-layout:fixed}
+  table.att th,table.att td{border:1px solid var(--line);text-align:center;font-size:9.5pt;padding:0 1px}
+  table.att th{font-weight:700;height:6mm;line-height:1.1;font-size:8.5pt;white-space:nowrap}
+  table.att td{height:6.1mm;font-weight:700}
+  col.c-idx{width:4%}
+  col.c-date{width:15%}
+  col.c-sig{width:8%}
+
+  .tasks-box{border:1px solid var(--line);margin-top:5px;padding:3px 7px 6px}
+  .tasks-box .hd{font-weight:700}
+  .tasks-box .ln{border-bottom:1px dotted var(--line);min-height:1.3em;padding:1px 3px;font-weight:700;text-align:right}
+
+  .sign-box{border:1px solid var(--line);margin-top:6px;display:grid;grid-template-columns:1fr 1fr 1fr}
+  .sign-col{border-right:1px solid var(--line);padding:3px 7px 5px}
+  .sign-col:first-child{border-right:none}
+  .sign-col .hd{text-align:center;font-weight:700;border-bottom:1px solid var(--line);margin:0 -7px 4px;padding-bottom:2px}
+  .sign-col .fld{margin-bottom:4px}
+  .sign-col .lbl{font-size:10pt}
+
+  .foot-note{text-align:center;font-weight:700;font-size:9pt;margin-top:7px;line-height:1.3}
+  .foot-bar{display:flex;justify-content:space-between;align-items:flex-end;margin-top:4px}
+  .foot-no{font-weight:700;font-size:10.5pt;direction:ltr}
+  .page-tag{font-size:9pt;font-weight:700}
+
+  /* ============ وضع الطباعة: الاستمارة وحدها ملء الشاشة ============ */
+  /* زر خروج صغير حتى لا يظهر كثيراً في لقطة الشاشة */
+  #pvExit{
+    display:none;position:fixed;top:6px;left:6px;z-index:70;
+    width:34px;height:34px;padding:0;font-size:15px;border-radius:50%;
+    opacity:.45;background:#fff;color:#000;border:1px solid #999;
+  }
+  #pvExit:active{opacity:1}
+  body.printview{background:#fff}
+  body.printview .controls,body.printview .mobile-bar{display:none !important}
+  body.printview .app{display:block;padding:0;min-height:0}
+  body.printview .preview-wrap{display:flex !important;padding:0;gap:0}
+  body.printview #pvExit{display:block}
+  body.printview .sheet{
+    --paper:#ffffff; --paper-ink:#000000; --line:#000000;
+    background:#fff;color:#000;box-shadow:none;
+  }
+  /* إخفاء دلالات المساحات المحجوزة حتى تكون الصورة نظيفة */
+  body.printview .zone{border-color:transparent;color:transparent}
+
+  /* ============ الجوال واللوحيات ============ */
+  .mobile-bar{display:none}
+  @media screen and (max-width:900px){
+    .app{display:block;padding:10px 10px 24px;min-height:0}
+    .controls{
+      width:auto;max-width:none;position:static;max-height:none;overflow:visible;
+      padding:12px;margin-bottom:12px;
+    }
+    .preview-wrap{align-items:flex-start;overflow:hidden;padding-bottom:6px}
+    /* قص الجزء غير المُصغَّر حتى لا تنزلق الصفحة أفقياً على الجوال */
+    .sheet-holder{overflow:hidden}
+    /* منع تكبير الصفحة تلقائياً عند لمس الحقول في iOS */
+    input[type=text],input[type=date],input[type=month],input[type=tel],input[type=number],select,textarea{
+      font-size:16px;padding:9px 10px;
+    }
+    .btn{padding:10px 12px;font-size:13.5px}
+    .mini{font-size:12px;padding:8px 6px}
+    .theme-btn{width:42px;height:42px;font-size:18px}
+    .cal-nav{width:36px;height:36px;font-size:17px}
+    .cal .day{padding:11px 0;font-size:13.5px}
+    .check-line{font-size:13px;padding:5px 0}
+    .radio-row label{font-size:13px}
+    .radio-row input,.check-line input{width:18px;height:18px;flex:0 0 auto}
+
+    /* تبويبان: البيانات / المعاينة */
+    body.m-preview .controls{display:none}
+    body:not(.m-preview) .preview-wrap{display:none}
+
+    /* شريط علوي لاصق — لا يتعارض مع شريط عنوان Safari السفلي في الآيفون */
+    .mobile-bar{
+      display:flex;gap:8px;position:sticky;top:0;z-index:20;
+      margin:0 0 10px;padding:8px 10px calc(8px + env(safe-area-inset-top));
+      background:var(--ui-panel);border-bottom:1px solid var(--ui-border);
+    }
+    .mobile-bar .btn{flex:1;min-height:44px;padding:10px 6px}
+    .mobile-bar #mFull{flex:0 0 auto;width:46px;font-size:17px}
+    .mobile-bar .btn.active{background:var(--ui-accent-soft);border-color:var(--ui-accent);color:var(--ui-accent)}
+  }
+  @media screen and (max-width:420px){
+    .grid2{grid-template-columns:1fr}
+  }
+
+  /* ============ الطباعة ============ */
+  @page{size:A4 portrait;margin:0}
+  @media print{
+    body{background:#fff;padding:0}
+    .app{display:block;padding:0}
+    .controls,.screen-only,.mobile-bar,#printTip,#noJs{display:none !important}
+    .preview-wrap{display:block !important;overflow:visible !important;padding:0}
+    .sheet-holder{
+      width:auto !important;height:auto !important;
+      page-break-after:always;break-after:page;
+    }
+    .sheet-holder:last-child{page-break-after:auto;break-after:auto}
+    .sheet{
+      /* الطباعة دائماً بالأبيض والأسود مهما كان الوضع على الشاشة */
+      --paper:#ffffff; --paper-ink:#000000; --line:#000000;
+      background:#fff;color:#000;
+      transform:none !important;
+      box-shadow:none;margin:0;width:210mm;height:296.8mm;
+    }
+  }
+</style>
+</head>
+<body>
+
+<noscript>
+  <div class="notice" id="noJs">
+    <b>هذه الصفحة تحتاج إلى تشغيل JavaScript.</b><br>
+    يبدو أنك تفتح الملف داخل تطبيق آخر (واتساب، البريد، أو معاينة «الملفات»)، وهذه المعاينات
+    تُعطّل التشغيل ولا تدعم الطباعة.<br>
+    اضغط زر المشاركة ⬆️ ثم اختر <b>«فتح في Safari»</b> — أو <b>Chrome</b> / <b>Edge</b> — وستعمل الاستمارة بالكامل.
+  </div>
+</noscript>
+
+<!-- تنبيه تعذّر الطباعة -->
+<div class="notice" id="printTip">
+  <b>لم تفتح نافذة الطباعة.</b><br>
+  هذا يحدث عندما يكون الملف مفتوحاً داخل تطبيق آخر. الحل:
+  اضغط زر المشاركة ⬆️ ← <b>«فتح في Safari»</b>، ثم من Safari:
+  زر المشاركة ⬆️ ← <b>طباعة</b> ← باعد إصبعيك على المعاينة ← ⬆️ ← <b>حفظ في «الملفات»</b>.
+  <button class="btn" id="tipClose" type="button">حسناً، أغلق</button>
+</div>
+
+<!-- ==================== شريط الجوال ==================== -->
+<nav class="mobile-bar screen-only">
+  <button class="btn active" id="mData" type="button">📝 البيانات</button>
+  <button class="btn" id="mPrev" type="button">👁️ المعاينة</button>
+  <button class="btn btn-primary" id="mPrint" type="button">🖨️ طباعة</button>
+  <button class="btn" id="mFull" type="button" title="وضع الطباعة">⛶</button>
+</nav>
+
+<button class="btn screen-only" id="pvExit" type="button" title="خروج من وضع الطباعة">✕</button>
+
+<div class="app">
+
+  <!-- ==================== لوحة الإدخال ==================== -->
+  <aside class="controls screen-only">
+    <div class="head-row">
+      <div>
+        <h1>استمارة كشف حضور وانصراف</h1>
+        <p class="sub">للموظفين العاملين بالمواقع الميدانية الغير ثابتة — نموذج 40-231000</p>
+      </div>
+      <button class="btn theme-btn" id="btnTheme" title="الوضع الليلي / النهاري">🌙</button>
+    </div>
+
+    <div class="btn-row" style="margin-bottom:8px">
+      <button class="btn btn-primary" id="btnPrint" type="button">🖨️ طباعة / حفظ PDF</button>
+      <button class="btn" id="btnReset" type="button">مسح الكل</button>
+    </div>
+    <div class="btn-row" style="margin-bottom:12px">
+      <button class="btn" id="btnFull" type="button">⛶ وضع الطباعة (للجوال)</button>
+    </div>
+    <p class="hint" style="margin:-6px 0 12px">
+      إذا كنت على الآيفون ولم تفتح نافذة الطباعة: افتح «وضع الطباعة» لتظهر الاستمارة وحدها ملء الشاشة،
+      ثم استخدم «حفظ كـ PDF» في التطبيق الذي تستعمله أو صوّر الشاشة.
+    </p>
+
+    <fieldset>
+      <legend>الورق الرسمي</legend>
+      <div class="grid2">
+        <div>
+          <label for="topMM">مساحة الترويسة العلوية (مم)</label>
+          <input type="number" id="topMM" min="0" max="120" step="1" value="45" data-k>
+        </div>
+        <div>
+          <label for="botMM">مساحة الشريط السفلي (مم)</label>
+          <input type="number" id="botMM" min="0" max="80" step="1" value="15" data-k>
+        </div>
+      </div>
+      <div class="hint">تُترك هذه المساحات فارغة تماماً عند الطباعة لتظهر ترويسة الشعار أعلى الورقة والشريط الرسومي أسفلها. يتم تصغير محتوى الاستمارة تلقائياً ليتسع للمساحة المتبقية.</div>
+      <div id="fitInfo" class="hint"></div>
+    </fieldset>
+
+    <fieldset>
+      <legend>بيانات الاستمارة</legend>
+      <div class="grid2">
+        <div><label for="ref">الإشارة</label><input type="text" id="ref" data-k></div>
+        <div><label for="formDate">التاريخ</label><input type="date" id="formDate" data-k></div>
+      </div>
+      <label>الفئة</label>
+      <div class="radio-row">
+        <label><input type="radio" name="cat" value="kw" data-k checked> كويتي</label>
+        <label><input type="radio" name="cat" value="sp" data-k> عقد خاص</label>
+        <label><input type="radio" name="cat" value="gulf" data-k> خليجي</label>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend>بيانات الموظف</legend>
+      <label for="name">الإسـم</label><input type="text" id="name" data-k>
+      <div class="grid2">
+        <div><label for="civil">الرقم المدني (12 رقم)</label><input type="tel" id="civil" maxlength="12" inputmode="numeric" data-k></div>
+        <div><label for="nat">الجنسيـة</label><input type="text" id="nat" data-k></div>
+        <div><label for="job">المسمى الوظيفي</label><input type="text" id="job" data-k></div>
+        <div><label for="phone">الهــاتف</label><input type="tel" id="phone" data-k></div>
+        <div><label for="empno">الرقم الوظيفي</label><input type="text" id="empno" data-k></div>
+        <div><label for="entity">جهة العمل</label><input type="text" id="entity" data-k></div>
+        <div><label for="ctype">نوع العقد</label><input type="text" id="ctype" data-k></div>
+        <div><label for="center">مركز العمل</label><input type="text" id="center" data-k></div>
+      </div>
+      <label>موقع ميداني</label>
+      <div class="radio-row">
+        <label><input type="radio" name="site" value="fixed" data-k> ثابت</label>
+        <label><input type="radio" name="site" value="nonfixed" data-k checked> غير ثابت</label>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend>أيام العمل — اختر من التقويم</legend>
+      <div class="cal-head">
+        <button class="cal-nav" id="prevM" title="الشهر السابق">‹</button>
+        <span class="cal-title" id="calTitle"></span>
+        <button class="cal-nav" id="nextM" title="الشهر التالي">›</button>
+      </div>
+      <div class="cal" id="cal"></div>
+      <div class="btn-row" style="margin-top:8px">
+        <button class="btn mini" id="selWork">أيام العمل (الأحد–الخميس)</button>
+        <button class="btn mini" id="selAll">كل الشهر</button>
+        <button class="btn mini" id="selNone">مسح التحديد</button>
+      </div>
+      <div class="cal-count" id="calCount"></div>
+      <div id="calWarn"></div>
+
+      <label class="check-line"><input type="checkbox" id="merge" data-k> دمج الأيام المتتالية في فترة واحدة (بداية – نهاية)</label>
+      <label class="check-line"><input type="checkbox" id="blankEnd" data-k> ترك «تاريخ نهاية العمل» فارغاً لليوم المنفرد</label>
+      <label class="check-line"><input type="checkbox" id="arabicNum" data-k> استخدام الأرقام العربية (١٢٣)</label>
+
+      <div class="grid2" style="margin-top:6px">
+        <div>
+          <label for="startExt">تاريخ بدء العمل بالمركز الخارجي</label>
+          <input type="date" id="startExt" data-k>
+        </div>
+        <div>
+          <label for="endExt">تاريخ انتهاء العمل بالمركز الخارجي</label>
+          <input type="date" id="endExt" data-k>
+        </div>
+      </div>
+      <div class="hint">إذا تُركا فارغين تُستخدم أول وآخر يوم محدد تلقائياً.</div>
+    </fieldset>
+
+    <fieldset>
+      <legend>مهام العمل المكلف بها</legend>
+      <textarea id="tasks" rows="4" data-k placeholder="سطر لكل مهمة (حتى 3 أسطر)"></textarea>
+    </fieldset>
+
+    <fieldset>
+      <legend>التواقيع</legend>
+      <label for="n1">الرئيس المباشر — الإسم</label><input type="text" id="n1" data-k>
+      <label for="d1">التاريخ</label><input type="date" id="d1" data-k>
+      <label for="n2">المراقب — الإسم</label><input type="text" id="n2" data-k>
+      <label for="d2">التاريخ</label><input type="date" id="d2" data-k>
+      <label for="n3">مدير الإدارة — الإسم</label><input type="text" id="n3" data-k>
+      <label for="d3">التاريخ</label><input type="date" id="d3" data-k>
+    </fieldset>
+
+    <div class="btn-row">
+      <button class="btn btn-primary" id="btnPrint2">🖨️ طباعة / حفظ PDF</button>
+    </div>
+    <p class="sub" style="margin-top:10px">تُحفظ البيانات تلقائياً في هذا المتصفح. الطباعة تكون دائماً بالأبيض والأسود حتى في الوضع الليلي. للحصول على ملف PDF اختر «حفظ كملف PDF» من نافذة الطباعة.</p>
+  </aside>
+
+  <!-- ==================== المعاينة ==================== -->
+  <div class="preview-wrap" id="sheets"></div>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  var AR_MONTHS = ["يناير","فبراير","مارس","أبريل","مايو","يونيو","يوليو","أغسطس","سبتمبر","أكتوبر","نوفمبر","ديسمبر"];
+  var AR_DOW    = ["الأحد","الإثنين","الثلاثاء","الأربعاء","الخميس","الجمعة","السبت"];
+  var AR_DOW_SH = ["أحد","إثنين","ثلاثاء","أربعاء","خميس","جمعة","سبت"];
+  var ROWS_PER_PAGE = 20;
+  var STORE_KEY = "timesheet-40-231000";
+  var THEME_KEY = "timesheet-40-231000-theme";
+
+  var $  = function(s,r){ return (r||document).querySelector(s); };
+  var $$ = function(s,r){ return Array.prototype.slice.call((r||document).querySelectorAll(s)); };
+
+  var today = new Date();
+  var view = { y: today.getFullYear(), m: today.getMonth() };
+  var selected = Object.create(null); // "YYYY-MM-DD" -> true
+
+  /* ---------- أدوات ---------- */
+  function pad(n){ return n < 10 ? "0" + n : "" + n; }
+  function key(y,m,d){ return y + "-" + pad(m+1) + "-" + pad(d); }
+  function parseKey(k){ var p = k.split("-"); return { y:+p[0], m:+p[1]-1, d:+p[2] }; }
+  function esc(s){
+    return String(s == null ? "" : s).replace(/[&<>"]/g, function(c){
+      return { "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;" }[c];
+    });
+  }
+  function toArabicDigits(s){
+    return String(s).replace(/[0-9]/g, function(d){ return "٠١٢٣٤٥٦٧٨٩"[+d]; });
+  }
+  function num(s){ return $("#arabicNum").checked ? toArabicDigits(s) : String(s); }
+  function fmtKey(k){ var p = parseKey(k); return num(pad(p.d) + "/" + pad(p.m+1) + "/" + p.y); }
+  function fmtInputDate(v){ return v ? fmtKey(v) : ""; }
+  function dayCount(y,m){ return new Date(y, m+1, 0).getDate(); }
+  function clamp(v,lo,hi){ return Math.min(hi, Math.max(lo, v)); }
+
+  /* ---------- الوضع الليلي ---------- */
+  function applyTheme(dark){
+    document.body.classList.toggle("dark", dark);
+    $("#btnTheme").textContent = dark ? "☀️" : "🌙";
+    try{ localStorage.setItem(THEME_KEY, dark ? "dark" : "light"); }catch(e){}
+  }
+
+  /* ---------- التقويم ---------- */
+  function renderCal(){
+    $("#calTitle").textContent = AR_MONTHS[view.m] + " " + view.y;
+    var cal = $("#cal");
+    cal.innerHTML = "";
+    AR_DOW_SH.forEach(function(d){
+      var e = document.createElement("div");
+      e.className = "dow";
+      e.textContent = d;
+      cal.appendChild(e);
+    });
+    var first = new Date(view.y, view.m, 1).getDay(); // 0 = الأحد
+    for (var i = 0; i < first; i++){
+      var pl = document.createElement("div");
+      pl.className = "day empty";
+      pl.textContent = "0";
+      cal.appendChild(pl);
+    }
+    var total = dayCount(view.y, view.m);
+    for (var d = 1; d <= total; d++){
+      var k = key(view.y, view.m, d);
+      var dow = new Date(view.y, view.m, d).getDay();
+      // زر حقيقي بدل div — أضمن للمس على iOS
+      var cell = document.createElement("button");
+      cell.type = "button";
+      cell.className = "day" + ((dow === 5 || dow === 6) ? " weekend" : "") + (selected[k] ? " on" : "");
+      cell.textContent = d;
+      cell.dataset.k = k;
+      cell.title = AR_DOW[dow] + " " + d + " " + AR_MONTHS[view.m];
+      cell.addEventListener("click", function(){
+        var kk = this.dataset.k;
+        if (selected[kk]) delete selected[kk]; else selected[kk] = true;
+        renderCal(); render(); save();
+      });
+      cal.appendChild(cell);
+    }
+    var n = selectedKeys().length;
+    $("#calCount").textContent = n ? ("عدد الأيام المحددة: " + n) : "لم يتم تحديد أي يوم بعد";
+  }
+
+  function selectedKeys(){ return Object.keys(selected).sort(); }
+
+  function bulkSelect(mode){
+    var total = dayCount(view.y, view.m);
+    for (var d = 1; d <= total; d++){
+      var k = key(view.y, view.m, d);
+      var dow = new Date(view.y, view.m, d).getDay();
+      if (mode === "none")      delete selected[k];
+      else if (mode === "all")  selected[k] = true;
+      else if (mode === "work"){ if (dow >= 0 && dow <= 4) selected[k] = true; else delete selected[k]; }
+    }
+    renderCal(); render(); save();
+  }
+
+  /* ---------- بناء صفوف الجدول ---------- */
+  function buildPeriods(){
+    var keys = selectedKeys();
+    var out = [];
+    if (!keys.length) return out;
+
+    if (!$("#merge").checked){
+      keys.forEach(function(k){ out.push({ s:k, e:k, single:true }); });
+      return out;
+    }
+    var startK = keys[0], prev = keys[0];
+    for (var i = 1; i < keys.length; i++){
+      var p = parseKey(prev), c = parseKey(keys[i]);
+      var next = new Date(p.y, p.m, p.d + 1);
+      var isNext = (next.getFullYear() === c.y && next.getMonth() === c.m && next.getDate() === c.d);
+      if (!isNext){ out.push({ s:startK, e:prev, single:startK === prev }); startK = keys[i]; }
+      prev = keys[i];
+    }
+    out.push({ s:startK, e:prev, single:startK === prev });
+    return out;
+  }
+
+  /* ---------- بناء الورقة ---------- */
+  function cbox(on){ return '<span class="cbox">' + (on ? "✓" : "&nbsp;") + "</span>"; }
+
+  function fld(label, value, labelWidth){
+    return '<div class="fld"><span class="lbl"' +
+      (labelWidth ? ' style="min-width:' + labelWidth + '"' : "") +
+      ">" + label + ' :</span><span class="fill">' + esc(value) + "</span></div>";
+  }
+
+  function civilCells(v){
+    var s = String(v || "").replace(/\D/g, "").slice(0, 12);
+    var html = "";
+    for (var i = 0; i < 12; i++) html += "<i>" + (s[i] ? esc(num(s[i])) : "&nbsp;") + "</i>";
+    return '<div class="civil">' + html + "</div>";
+  }
+
+  function monthLabel(){
+    var keys = selectedKeys();
+    var src = keys.length ? parseKey(keys[0]) : { y: view.y, m: view.m };
+    return AR_MONTHS[src.m] + " " + num(src.y);
+  }
+
+  function attTable(rows, base){
+    var head =
+      "<tr>" +
+        "<th>ت</th><th>تاريخ بداية العمل</th><th>التوقيع</th><th>تاريخ نهاية العمل</th><th>التوقيع</th>" +
+        "<th>ت</th><th>تاريخ بداية العمل</th><th>التوقيع</th><th>تاريخ نهاية العمل</th><th>التوقيع</th>" +
+      "</tr>";
+    var body = "";
+    for (var i = 0; i < 10; i++){
+      body += "<tr>" + cellPair(rows[i], base + i + 1) + cellPair(rows[i + 10], base + i + 11) + "</tr>";
+    }
+    return '<table class="att">' +
+      '<colgroup>' +
+        '<col class="c-idx"><col class="c-date"><col class="c-sig"><col class="c-date"><col class="c-sig">' +
+        '<col class="c-idx"><col class="c-date"><col class="c-sig"><col class="c-date"><col class="c-sig">' +
+      "</colgroup><thead>" + head + "</thead><tbody>" + body + "</tbody></table>";
+  }
+
+  function cellPair(p, idx){
+    var s = "", e = "";
+    if (p){
+      s = fmtKey(p.s);
+      e = (p.single && $("#blankEnd").checked) ? "" : fmtKey(p.e);
+    }
+    return "<td>" + num(idx) + "</td><td>" + s + '</td><td class="sig"></td><td>' + e + '</td><td class="sig"></td>';
+  }
+
+  function taskLines(){
+    var raw = $("#tasks").value.split("\n").filter(function(l){ return l.trim() !== ""; });
+    var html = "";
+    for (var i = 0; i < 3; i++) html += '<div class="ln">' + esc(raw[i] || "") + "</div>";
+    return html;
+  }
+
+  function signCol(title, name, date){
+    return '<div class="sign-col">' +
+      '<div class="hd">' + title + "</div>" +
+      fld("الإسم", name, "3.4em") +
+      fld("التوقيع", "", "3.4em") +
+      fld("التاريخ", fmtInputDate(date), "3.4em") +
+    "</div>";
+  }
+
+  function buildSheet(rows, base, pageNo, pages){
+    var cat  = ($$('input[name=cat]').filter(function(r){ return r.checked; })[0] || {}).value;
+    var site = ($$('input[name=site]').filter(function(r){ return r.checked; })[0] || {}).value;
+    var keys = selectedKeys();
+    var sExt = $("#startExt").value || (keys.length ? keys[0] : "");
+    var eExt = $("#endExt").value   || (keys.length ? keys[keys.length - 1] : "");
+
+    return '<div class="sheet-holder"><div class="sheet">' +
+      '<div class="zone zone-top screen-only">منطقة الترويسة الرسمية — تُترك فارغة</div>' +
+      '<div class="zone zone-bot screen-only">الشريط الرسومي السفلي — يُترك فارغاً</div>' +
+      '<div class="sheet-body">' +
+
+      '<div class="title-box">استمارة كشف حضور وانصراف للموظفين العاملين بالمواقع الميدانية الغير الثابتة</div>' +
+
+      '<div class="top-line">' + fld("الإشارة", $("#ref").value, "3.6em") + "</div>" +
+      '<div class="top-line">' + fld("التاريخ", fmtInputDate($("#formDate").value), "3.6em") + "</div>" +
+
+      '<div class="cats">' +
+        '<span class="cb-group"><span class="lbl">كويتي</span>'   + cbox(cat === "kw")   + "</span>" +
+        '<span class="cb-group"><span class="lbl">عقد خاص</span>' + cbox(cat === "sp")   + "</span>" +
+        '<span class="cb-group"><span class="lbl">خليجي</span>'   + cbox(cat === "gulf") + "</span>" +
+      "</div>" +
+
+      '<div class="info-box">' +
+        '<div class="info-row">' +
+          fld("الإسـم", $("#name").value, "4.6em") +
+          '<div class="fld"><span class="lbl">الرقم المدني</span>' + civilCells($("#civil").value) + "</div>" +
+        "</div>" +
+        '<div class="info-row">' +
+          fld("الجنسيـة", $("#nat").value, "4.6em") +
+          fld("المسمى الوظيفي", $("#job").value, "6.6em") +
+        "</div>" +
+        '<div class="info-row">' +
+          fld("الهــاتف", $("#phone").value, "4.6em") +
+          fld("الرقم الوظيفي", $("#empno").value, "6.6em") +
+        "</div>" +
+        '<div class="info-row">' +
+          fld("جهة العمل", $("#entity").value, "4.6em") +
+          fld("نوع العقد", $("#ctype").value, "6.6em") +
+        "</div>" +
+        '<div class="info-row">' +
+          fld("مركز العمل", $("#center").value, "4.6em") +
+          fld("توقيع الموظف", "", "6.6em") +
+        "</div>" +
+        '<div class="site-row">' +
+          '<span class="lbl">موقع ميداني :</span>' +
+          '<span class="cb-group"><span class="lbl">ثابت</span>' + cbox(site === "fixed") + "</span>" +
+          '<span class="cb-group"><span class="lbl">غير ثابت</span>' + cbox(site === "nonfixed") + "</span>" +
+        "</div>" +
+        '<div class="month-row"><span class="lbl">عن شهر :</span><span class="fill">' + esc(monthLabel()) + "</span></div>" +
+      "</div>" +
+
+      '<div class="ext-box">' +
+        fld("تاريخ بدء العمل بالمركز الخارجي", fmtInputDate(sExt)) +
+        fld("تاريخ انتهاء العمل بالمركز الخارجي", fmtInputDate(eExt)) +
+      "</div>" +
+
+      '<div class="sec-head">كشف الحضور والانصراف للمكلفين بالعمل بالمواقع الميدانية في حالة المواقع الغير ثابتة</div>' +
+      attTable(rows, base) +
+
+      '<div class="tasks-box"><div class="hd">مهام العمل المكلف بها :</div>' + taskLines() + "</div>" +
+
+      '<div class="sign-box">' +
+        signCol("الرئيس المباشر", $("#n1").value, $("#d1").value) +
+        signCol("المراقب",        $("#n2").value, $("#d2").value) +
+        signCol("مدير الإدارة",   $("#n3").value, $("#d3").value) +
+      "</div>" +
+
+      '<div class="foot-note">تعتبر الضوابط والأحكام العامة المطبوعة بالخلف جزءاً لا يتجزأ من هذا النموذج ولن يعتد بالجهل بها من قبل أي من الموقعين أعلاه.</div>' +
+      '<div class="foot-bar">' +
+        '<div class="foot-no">40-231000</div>' +
+        "<div class=\"page-tag\">" + (pages > 1 ? "صفحة " + num(pageNo) + " من " + num(pages) : "") + "</div>" +
+      "</div>" +
+
+      "</div></div></div>";
+  }
+
+  /* ---------- المساحات المحجوزة والتحجيم التلقائي ---------- */
+  function applyReserves(){
+    var t = clamp(parseFloat($("#topMM").value) || 0, 0, 120);
+    var b = clamp(parseFloat($("#botMM").value) || 0, 0, 80);
+    document.documentElement.style.setProperty("--top-mm", t + "mm");
+    document.documentElement.style.setProperty("--bot-mm", b + "mm");
+  }
+
+  /* تصغير المعاينة لتناسب عرض الشاشة على الجوال */
+  function fitPreview(){
+    var wrap = $("#sheets");
+    var avail = wrap.clientWidth;
+    if (!avail) return;
+    var W = 210 * 96 / 25.4;                  // عرض A4 بالبكسل
+    var H = 296.8 * 96 / 25.4;                // ارتفاع الورقة بالبكسل
+    var pv = Math.min(1, avail / W);
+    document.documentElement.style.setProperty("--pv", pv.toFixed(4));
+    // تحديد المقاس بالبكسل مباشرةً بدلاً من calc على متغيّر CSS (أضمن في Safari)
+    $$(".sheet-holder").forEach(function(h){
+      h.style.width  = Math.ceil(W * pv) + "px";
+      h.style.height = Math.ceil(H * pv) + "px";
+    });
+  }
+
+  function autoFit(){
+    var sheets = $$(".sheet");
+    // المعاينة مخفية (تبويب البيانات على الجوال) — يُعاد القياس عند إظهارها
+    if (!sheets.length || !sheets[0].clientHeight) return;
+    var scales = [];
+    sheets.forEach(function(sh){
+      var body = $(".sheet-body", sh);
+      body.style.transform = "none";
+      var cs = getComputedStyle(sh);
+      var avail = sh.clientHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom);
+      var need = body.scrollHeight;
+      var s = (need > avail && need > 0) ? avail / need : 1;
+      s = Math.max(0.5, s);
+      body.style.transform = s < 1 ? "scale(" + s.toFixed(4) + ")" : "none";
+      scales.push(s);
+    });
+    var min = scales.length ? Math.min.apply(null, scales) : 1;
+    $("#fitInfo").textContent = min < 0.999
+      ? "تم تصغير المحتوى إلى " + Math.round(min * 100) + "% ليتسع للمساحة المتبقية."
+      : "المحتوى يتسع بالحجم الكامل (100%).";
+  }
+
+  /* ---------- العرض ---------- */
+  function render(){
+    applyReserves();
+    var periods = buildPeriods();
+    var pages = Math.max(1, Math.ceil(periods.length / ROWS_PER_PAGE));
+    var html = "";
+    for (var p = 0; p < pages; p++){
+      var base = p * ROWS_PER_PAGE;
+      html += buildSheet(periods.slice(base, base + ROWS_PER_PAGE), base, p + 1, pages);
+    }
+    $("#sheets").innerHTML = html;
+
+    var w = $("#calWarn");
+    if (periods.length > ROWS_PER_PAGE){
+      w.innerHTML = '<div class="warn">عدد الفترات (' + periods.length +
+        ") يتجاوز 20 صفاً، لذا تم إنشاء " + pages + " صفحات تلقائياً.</div>";
+    } else {
+      w.innerHTML = "";
+    }
+    autoFit();
+    fitPreview();
+  }
+
+  /* ---------- الحفظ والاسترجاع ---------- */
+  function save(){
+    try{
+      var data = { dates: selectedKeys(), view: view, fields: {} };
+      $$("[data-k]").forEach(function(el){
+        if (el.type === "radio"){ if (el.checked) data.fields[el.name] = el.value; }
+        else if (el.type === "checkbox") data.fields[el.id] = el.checked;
+        else data.fields[el.id] = el.value;
+      });
+      localStorage.setItem(STORE_KEY, JSON.stringify(data));
+    }catch(e){/* التخزين غير متاح */}
+  }
+
+  function load(){
+    var raw;
+    try{ raw = localStorage.getItem(STORE_KEY); }catch(e){ return; }
+    if (!raw) return;
+    var data;
+    try{ data = JSON.parse(raw); }catch(e){ return; }
+    (data.dates || []).forEach(function(k){ selected[k] = true; });
+    if (data.view && typeof data.view.y === "number"){ view.y = data.view.y; view.m = data.view.m; }
+    var f = data.fields || {};
+    Object.keys(f).forEach(function(k){
+      var radios = $$('input[name="' + k + '"]');
+      if (radios.length){
+        radios.forEach(function(r){ r.checked = (r.value === f[k]); });
+        return;
+      }
+      var el = document.getElementById(k);
+      if (!el) return;
+      if (el.type === "checkbox") el.checked = !!f[k];
+      else el.value = f[k];
+    });
+  }
+
+  /* ---------- الربط ---------- */
+  $$("[data-k]").forEach(function(el){
+    el.addEventListener("input",  function(){ render(); save(); });
+    el.addEventListener("change", function(){ render(); save(); });
+  });
+  $("#civil").addEventListener("input", function(){
+    this.value = this.value.replace(/\D/g, "").slice(0, 12);
+  });
+
+  $("#prevM").addEventListener("click", function(){
+    view.m--; if (view.m < 0){ view.m = 11; view.y--; }
+    renderCal(); save();
+  });
+  $("#nextM").addEventListener("click", function(){
+    view.m++; if (view.m > 11){ view.m = 0; view.y++; }
+    renderCal(); save();
+  });
+  $("#selWork").addEventListener("click", function(){ bulkSelect("work"); });
+  $("#selAll").addEventListener("click",  function(){ bulkSelect("all"); });
+  $("#selNone").addEventListener("click", function(){ bulkSelect("none"); });
+
+  $("#btnTheme").addEventListener("click", function(){
+    applyTheme(!document.body.classList.contains("dark"));
+  });
+
+  /* الطباعة — مع كشف الحالة التي لا تفتح فيها نافذة الطباعة
+     (المتصفحات المدمجة داخل التطبيقات على iOS تتجاهل window.print) */
+  var printStarted = false;
+  function markPrint(){ printStarted = true; }
+  window.addEventListener("beforeprint", markPrint);
+  try{
+    var pmq = window.matchMedia("print");
+    if (pmq.addEventListener) pmq.addEventListener("change", function(e){ if (e.matches) markPrint(); });
+    else if (pmq.addListener) pmq.addListener(function(e){ if (e.matches) markPrint(); });
+  }catch(e){}
+
+  function doPrint(){
+    printStarted = false;
+    $("#printTip").style.display = "none";
+    try{ window.print(); }catch(e){}
+    setTimeout(function(){
+      if (!printStarted) $("#printTip").style.display = "block";
+    }, 1500);
+  }
+  $("#tipClose").addEventListener("click", function(){ $("#printTip").style.display = "none"; });
+
+  $("#btnPrint").addEventListener("click",  doPrint);
+  $("#btnPrint2").addEventListener("click", doPrint);
+
+  /* شريط الجوال: تبديل بين البيانات والمعاينة */
+  function showPreview(on){
+    document.body.classList.toggle("m-preview", on);
+    $("#mPrev").classList.toggle("active", on);
+    $("#mData").classList.toggle("active", !on);
+    if (on){ fitPreview(); autoFit(); }
+    window.scrollTo(0, 0);
+  }
+  $("#mData").addEventListener("click",  function(){ showPreview(false); });
+  $("#mPrev").addEventListener("click",  function(){ showPreview(true); });
+  $("#mPrint").addEventListener("click", doPrint);
+
+  /* وضع الطباعة: الاستمارة وحدها ملء الشاشة — لالتقاط صورة أو «حفظ كـ PDF»
+     في التطبيقات التي لا تدعم window.print */
+  function setPrintView(on){
+    document.body.classList.toggle("printview", on);
+    $("#printTip").style.display = "none";
+    window.scrollTo(0, 0);
+    fitPreview();
+    autoFit();
+  }
+  $("#btnFull").addEventListener("click", function(){ setPrintView(true); });
+  $("#mFull").addEventListener("click",   function(){ setPrintView(true); });
+  $("#pvExit").addEventListener("click",  function(){ setPrintView(false); });
+  document.addEventListener("keydown", function(e){
+    if (e.key === "Escape" && document.body.classList.contains("printview")) setPrintView(false);
+  });
+
+  window.addEventListener("resize", fitPreview);
+  window.addEventListener("orientationchange", function(){ setTimeout(fitPreview, 250); });
+  $("#btnReset").addEventListener("click", function(){
+    if (!confirm("سيتم مسح جميع البيانات والأيام المحددة. هل تريد المتابعة؟")) return;
+    $$("[data-k]").forEach(function(el){
+      if (el.type === "checkbox") el.checked = false;
+      else if (el.type === "radio") el.checked = (el.value === "kw" || el.value === "nonfixed");
+      else if (el.id === "topMM") el.value = "45";
+      else if (el.id === "botMM") el.value = "15";
+      else el.value = "";
+    });
+    Object.keys(selected).forEach(function(k){ delete selected[k]; });
+    try{ localStorage.removeItem(STORE_KEY); }catch(e){}
+    renderCal(); render();
+  });
+
+  /* ---------- التشغيل ---------- */
+  var storedTheme;
+  try{ storedTheme = localStorage.getItem(THEME_KEY); }catch(e){}
+  applyTheme(storedTheme
+    ? storedTheme === "dark"
+    : (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches));
+
+  load();
+  if (!$("#formDate").value){
+    $("#formDate").value = today.getFullYear() + "-" + pad(today.getMonth() + 1) + "-" + pad(today.getDate());
+  }
+  renderCal();
+  render();
+})();
+</script>
+</body>
+</html>
