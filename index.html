@@ -183,10 +183,11 @@
   .info-row{display:grid;grid-template-columns:1fr 1fr;gap:0 22px;margin-bottom:3px}
   .civil{display:flex;gap:0;direction:ltr}
   .civil i{
-    display:block;width:5mm;height:5.4mm;border:1px solid var(--line);border-left:none;
+    display:block;width:5mm;height:5.4mm;border:1px solid var(--line);
+    margin-left:-1px;                     /* تراكب الحدود: خط واحد بين الخانات وكل الأطراف مقفلة */
     font-style:normal;font-weight:700;text-align:center;line-height:5.2mm;font-size:10pt;
   }
-  .civil i:last-child{border-left:1px solid var(--line)}
+  .civil i:first-child{margin-left:0}
   .site-row{display:flex;justify-content:center;align-items:center;gap:16px;margin:5px 0 3px}
   .month-row{display:flex;justify-content:center;gap:6px;margin-top:2px}
   .month-row .fill{flex:0 0 46%}
